@@ -17,31 +17,38 @@ var lucySongs = [
      }
 ];
 
- var artistCreate = function() {
- 	return DB.Artist.create({
-     name: 'Luciano Pavarotti',
-     photoUrl: 'http://img.informador.com.mx/biblioteca/imagen/677x508/811/810055.jpg',
-     nationality: 'Italiano',
-     instrument: 'Voice',
-     home_address: '1 Strada Roma'
-   })
-     .then(function(artist) {
-          lucySongs.forEach(function(song) {
-               song.artistId = artist.id;
-          });
-          DB.Song.bulkCreate(lucySongs);
-     });
- };
- 
- var managerCreate = function() {
- 	return DB.Manager.create({
+var managerCreate = function() {
+     return DB.Manager.create({
      name: 'Ricky Bobby',
      email: 'rbobby@gmail.com',
      office_number: '516-877-0304',
-     cell_phone_number: '718-989-1231'
- 	});
- };
+     cell_phone_number: '718-989-1231',
+     })
+
  
+ 	.then(function(manager) { 
+
+          DB.Artist.create({
+          name: 'Luciano Pavarotti',
+          photoUrl: 'http://img.informador.com.mx/biblioteca/imagen/677x508/811/810055.jpg',
+          nationality: 'Italiano',
+          instrument: 'Voice',
+          home_address: '1 Strada Roma',
+          managerId: manager.id
+          
+          })
+          .then(function(artist) {
+               lucySongs.forEach(function(song) {
+                    song.artistId = artist.id;
+
+               });
+
+               DB.Song.bulkCreate(lucySongs);
+          })   
+     })
+};
+ 
+
  var songCreate = function() {
  	return DB.Song.create({
  	    title: 'The Best Song Ever',
@@ -51,8 +58,9 @@ var lucySongs = [
  	});
  };
  
- artistCreate()
- .then(managerCreate)
+ // artistCreate()
+ managerCreate()
+ // .then(managerCreate)
  .then(songCreate)
  .then(function() {
  	process.exit();
